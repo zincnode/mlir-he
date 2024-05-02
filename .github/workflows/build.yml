@@ -1,0 +1,62 @@
+name: build
+
+on: [push, pull_request]
+
+env:
+  LLVM_COMMIT: c1298878175f1f6b7f991a18550de97a699cf260
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        ninja-version: '1.12.0'
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Cache LLVM build
+      id: cache-llvm
+      uses: actions/cache@v4
+      with:
+        path: llvm-project
+        key: ${{ runner.os }}-llvm-${{ env.LLVM_COMMIT }}
+
+    - name: Get LLVM
+      if: steps.cache-llvm.outputs.cache-hit != 'true'
+      uses: actions/checkout@master
+      with:
+        repository: llvm/llvm-project
+        ref: ${{ env.LLVM_COMMIT }}
+        path: llvm-project
+
+    - name: Build LLVM
+      if: steps.cache-llvm.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p llvm-project/build
+        cd llvm-project/build
+        cmake -G Ninja ../llvm \
+          -DLLVM_ENABLE_PROJECTS=mlir \
+          -DLLVM_TARGETS_TO_BUILD="host" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DLLVM_ENABLE_ASSERTIONS=ON \
+          -DCMAKE_C_COMPILER=clang \
+          -DCMAKE_CXX_COMPILER=clang++ \
+          -DLLVM_ENABLE_LLD=ON \
+          -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+          -DLLVM_INSTALL_UTILS=ON
+        cmake --build . --
+
+    - name: Build MLIR-He
+      run: |
+        mkdir -p ${{ github.workspace }}/build
+        cd ${{ github.workspace }}/build
+        cmake -G Ninja .. -DMLIR_DIR=${{ github.workspace }}/llvm-project/build/lib/cmake/mlir
+        cmake --build . --
