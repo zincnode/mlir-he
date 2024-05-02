@@ -4,9 +4,9 @@
 
 This project aims to provide a naive template for out-of-tree MLIR projects. 
 
-# Build
+## Build
 
-## llvm-project
+### llvm-project
 
 ```sh
 pip install numpy pybind11
@@ -35,7 +35,7 @@ cmake --build . --target check-mlir
 export LLVM_BUILD_DIR=<your-path>/build
 ```
 
-## MLIR-He
+### MLIR-He
 
 ```sh
 git clone https://github.com/zincnode/mlir-he.git
