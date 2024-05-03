@@ -43,6 +43,8 @@ mkdir mlir-he/build && cd mlir-he/build
 cmake -G Ninja .. -DMLIR_DIR=$LLVM_BUILD_DIR/lib/cmake/mlir
 
 cmake --build . --
+# Run tests:
+cmake --build . --target check-mlir-he
 ```
 
 ## References

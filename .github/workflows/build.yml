@@ -58,3 +58,8 @@ jobs:
         cd ${{ github.workspace }}/build
         cmake -G Ninja .. -DMLIR_DIR=${{ github.workspace }}/llvm-project/build/lib/cmake/mlir
         cmake --build . --
+
+    - name: Check MLIR-He
+      run: |
+        cd ${{ github.workspace }}/build
+        cmake --build . --target check-mlir-he
