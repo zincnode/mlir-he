@@ -1,6 +1,6 @@
 name: build
 
-on: [push, pull_request]
+on: [pull_request]
 
 env:
   LLVM_COMMIT: c1298878175f1f6b7f991a18550de97a699cf260
@@ -11,9 +11,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: seanmiddleditch/gha-setup-ninja@master
-      with:
-        ninja-version: '1.12.0'
+    - uses: seanmiddleditch/gha-setup-ninja@v4
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
