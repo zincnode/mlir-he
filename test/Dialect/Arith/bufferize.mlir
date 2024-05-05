@@ -1,5 +1,5 @@
-// RUN: mlir-opt %s -arith-bufferize -split-input-file -verify-diagnostics | FileCheck %s
-// RUN: mlir-opt %s -arith-bufferize=alignment=64 -split-input-file -verify-diagnostics | FileCheck --check-prefix=ALIGNED %s
+// RUN: he-opt %s -arith-bufferize -split-input-file -verify-diagnostics | FileCheck %s
+// RUN: he-opt %s -arith-bufferize=alignment=64 -split-input-file -verify-diagnostics | FileCheck --check-prefix=ALIGNED %s
 
 // CHECK-LABEL:   func @index_cast(
 // CHECK-SAME:  %[[TENSOR:.*]]: tensor<i32>, %[[SCALAR:.*]]: i32

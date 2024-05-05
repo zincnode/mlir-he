@@ -16,12 +16,14 @@ useage() {
     echo "  -cb, --clean-build  Clean and build the project."
     echo "  -d, --debug         Build the project in debug mode. Default: Release"
     echo "  -jN                 Build the project with N threads. Default: $(nproc)"
+    echo "  -t, --test          Run the tests."
 }
 
 clean_flag=0
 build_flag=1
 build_type="Release"
 build_threads=$(nproc)
+test_flag=0
 
 clean_project() {
     echo "Cleaning the project..."
@@ -36,6 +38,9 @@ build_project() {
     cd $PROJECT_BUILD_DIR
     cmake -G Ninja .. -DMLIR_DIR=$LLVM_BUILD_DIR/lib/cmake/mlir -DCMAKE_BUILD_TYPE=$build_type
     cmake --build . -- -j$build_threads
+    if [[ $test_flag -eq 1 ]]; then
+        cmake --build . --target check-mlir-he -j$build_threads
+    fi
 }
 
 for arg in "$@"; do
@@ -46,7 +51,6 @@ for arg in "$@"; do
             ;;
         -cb|--clean-build)
             clean_flag=1
-            build_flag=1
             ;;
         -d|--debug)
             build_type="Debug"
@@ -54,6 +58,9 @@ for arg in "$@"; do
         -j[0-9]*)
             # parse the threads, the format is -j4
             build_threads=${arg#-j}
+            ;;
+        -t|--test)
+            test_flag=1
             ;;
         *)
             useage
