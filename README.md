@@ -47,6 +47,17 @@ cmake --build . --
 cmake --build . --target check-mlir-he
 ```
 
+or
+
+```sh
+git clone https://github.com/zincnode/mlir-he.git
+cd mlir-he
+
+./scripts/build.sh
+# Run tests:
+./scripts/build.sh -t
+```
+
 ## References
 
 - [jmgorius/mlir-standalone-template](https://github.com/jmgorius/mlir-standalone-template)
