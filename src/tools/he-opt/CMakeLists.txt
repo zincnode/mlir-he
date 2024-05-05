@@ -7,4 +7,5 @@ target_link_libraries(he-opt PRIVATE
   ${dialect_libs}
   ${conversion_libs}
   MLIROptLib
+  MLIRTransforms
 )
