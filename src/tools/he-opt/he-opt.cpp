@@ -5,10 +5,12 @@
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
 
 #include "initAllHeDialects.h"
+#include "InitAllHePasses.h"
 
 
 int main(int argc, char **argv) {
   mlir::registerAllPasses();
+  mlir_he::registerAllHePasses();
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);

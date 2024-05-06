@@ -1,4 +1,4 @@
-add_mlir_dialect_library(MLIRHeDialect
+add_mlir_dialect_library(HeDialect
   He.cpp
   HeOps.cpp
 
