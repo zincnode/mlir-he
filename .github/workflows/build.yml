@@ -3,7 +3,7 @@ name: build
 on: [pull_request]
 
 env:
-  LLVM_COMMIT: 7198b8a39a062215aaf4ad8d2df23f7a10eaf6ae
+  LLVM_COMMIT: 11a6799740f824282650aa9ec249b55dcf1a8aae
   LLVM_BUILD_DIR: ${{ github.workspace }}/llvm-project/build
   LLVM_INSTALL_DIR: ${{ github.workspace }}/llvm-project/install
 
@@ -28,6 +28,7 @@ jobs:
       with:
         path: llvm-project
         key: ${{ runner.os }}-llvm-${{ env.LLVM_COMMIT }}
+        save-always: true
 
     - name: Get llvm-project
       if: steps.cache-llvm.outputs.cache-hit != 'true'
