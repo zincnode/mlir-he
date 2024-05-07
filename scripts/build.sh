@@ -9,6 +9,12 @@ if [[ -z $LLVM_BUILD_DIR ]]; then
     exit 1
 fi
 
+# Check if the LLVM install directory is set
+if [[ -z $LLVM_INSTALL_DIR ]]; then
+    echo "LLVM_INSTALL_DIR is not set. Please set it to the LLVM install directory."
+    exit 1
+fi
+
 useage() {
     echo "Usage: $0 [options]"
     echo "Options:"
@@ -36,10 +42,15 @@ build_project() {
         mkdir $PROJECT_BUILD_DIR
     fi
     cd $PROJECT_BUILD_DIR
-    cmake -G Ninja .. -DMLIR_DIR=$LLVM_BUILD_DIR/lib/cmake/mlir -DCMAKE_BUILD_TYPE=$build_type
-    cmake --build . -- -j$build_threads
+    cmake -G Ninja .. \
+        -DMLIR_DIR=$LLVM_INSTALL_DIR/lib/cmake/mlir \
+        -DLLVM_EXTERNAL_LIT=$LLVM_BUILD_DIR/bin/llvm-lit \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
+        -DCMAKE_BUILD_TYPE=$build_type
+    ninja -j $build_threads
     if [[ $test_flag -eq 1 ]]; then
-        cmake --build . --target check-mlir-he -j$build_threads
+        ninja check-mlir-he -j $build_threads
     fi
 }
 

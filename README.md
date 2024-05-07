@@ -14,7 +14,7 @@ pip install numpy pybind11
 
 ```sh
 git clone https://github.com/llvm/llvm-project.git
-mkdir llvm-project/build && cd llvm-project/build
+mkdir llvm-project/build llvm-project/install && cd llvm-project/build
 
 cmake -G Ninja ../llvm \
    -DLLVM_ENABLE_PROJECTS=mlir \
@@ -25,13 +25,16 @@ cmake -G Ninja ../llvm \
    -DCMAKE_CXX_COMPILER=clang++ \
    -DLLVM_ENABLE_LLD=ON \
    -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
-   -DLLVM_INSTALL_UTILS=ON
+   -DLLVM_INSTALL_UTILS=ON \
+   -DLLVM_ENABLE_BINDINGS=OFF \
+   -DCMAKE_INSTALL_PREFIX=../install
 
-cmake --build . --
+ninja install
 # Run tests:
-cmake --build . --target check-mlir
+ninja check-mlir
 
-export LLVM_BUILD_DIR=<your-path>/build
+export LLVM_BUILD_DIR=<llvm-project-path>/build
+export LLVM_INSTALL_DIR=<llvm-project-path>/install
 ```
 
 ### MLIR-He
@@ -40,11 +43,15 @@ export LLVM_BUILD_DIR=<your-path>/build
 git clone https://github.com/zincnode/mlir-he.git
 mkdir mlir-he/build && cd mlir-he/build
 
-cmake -G Ninja .. -DMLIR_DIR=$LLVM_BUILD_DIR/lib/cmake/mlir
+cmake -G Ninja .. \
+   -DMLIR_DIR=$LLVM_INSTALL_DIR/lib/cmake/mlir \
+   -DLLVM_EXTERNAL_LIT=$LLVM_BUILD_DIR/bin/llvm-lit \
+   -DCMAKE_C_COMPILER=clang \
+   -DCMAKE_CXX_COMPILER=clang++
 
-cmake --build . --
+ninja
 # Run tests:
-cmake --build . --target check-mlir-he
+ninja check-mlir-he
 ```
 
 or

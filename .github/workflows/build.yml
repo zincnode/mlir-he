@@ -3,7 +3,9 @@ name: build
 on: [pull_request]
 
 env:
-  LLVM_COMMIT: c1298878175f1f6b7f991a18550de97a699cf260
+  LLVM_COMMIT: 7198b8a39a062215aaf4ad8d2df23f7a10eaf6ae
+  LLVM_BUILD_DIR: ${{ github.workspace }}/llvm-project/build
+  LLVM_INSTALL_DIR: ${{ github.workspace }}/llvm-project/install
 
 jobs:
   build:
@@ -20,14 +22,14 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Cache LLVM build
+    - name: Cache llvm-project build
       id: cache-llvm
       uses: actions/cache@v4
       with:
         path: llvm-project
         key: ${{ runner.os }}-llvm-${{ env.LLVM_COMMIT }}
 
-    - name: Get LLVM
+    - name: Get llvm-project
       if: steps.cache-llvm.outputs.cache-hit != 'true'
       uses: actions/checkout@master
       with:
@@ -35,10 +37,10 @@ jobs:
         ref: ${{ env.LLVM_COMMIT }}
         path: llvm-project
 
-    - name: Build LLVM
+    - name: Build llvm-project
       if: steps.cache-llvm.outputs.cache-hit != 'true'
       run: |
-        mkdir -p llvm-project/build
+        mkdir llvm-project/build llvm-project/install
         cd llvm-project/build
         cmake -G Ninja ../llvm \
           -DLLVM_ENABLE_PROJECTS=mlir \
@@ -49,17 +51,15 @@ jobs:
           -DCMAKE_CXX_COMPILER=clang++ \
           -DLLVM_ENABLE_LLD=ON \
           -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
-          -DLLVM_INSTALL_UTILS=ON
-        cmake --build . --
+          -DLLVM_INSTALL_UTILS=ON \
+          -DLLVM_ENABLE_BINDINGS=OFF \
+          -DCMAKE_INSTALL_PREFIX=../install
+        ninja install
 
     - name: Build MLIR-He
       run: |
-        mkdir -p ${{ github.workspace }}/build
-        cd ${{ github.workspace }}/build
-        cmake -G Ninja .. -DMLIR_DIR=${{ github.workspace }}/llvm-project/build/lib/cmake/mlir
-        cmake --build . --
+        ./scripts/build.sh
 
     - name: Check MLIR-He
       run: |
-        cd ${{ github.workspace }}/build
-        cmake --build . --target check-mlir-he
+        ./scripts/build.sh -t
