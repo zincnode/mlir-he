@@ -8,6 +8,7 @@ configure_lit_site_cfg(
 set(MLIR_HE_TEST_DEPENDS
   FileCheck count not
   he-opt
+  he-lsp-server
 )
 
 add_lit_testsuite(check-mlir-he "Running MLIR-He regression tests"

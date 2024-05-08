@@ -59,6 +59,6 @@ config.mlir_he_tools_dir = os.path.join(config.mlir_he_obj_root, "bin")
 llvm_config.with_environment("PATH", config.llvm_tools_dir, append_path=True)
 
 tool_dirs = [config.mlir_he_tools_dir, config.llvm_tools_dir]
-tools = ["he-opt"]
+tools = ["he-opt", "he-lsp-server"]
 
 llvm_config.add_tool_substitutions(tools, tool_dirs)
