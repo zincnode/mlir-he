@@ -8,7 +8,7 @@ git clone https://github.com/zincnode/mlir-he.git && cd mlir-he
 docker build -t <image-name>:<tag> ./docker
 
 # `apt_mirror` and `pypi_mirror` can be specified at build time to replace the default mirror source to speed up the build process. e.g.:
-# docker build -t mlir-he ./docker --build-arg apt_mirror="mirrors.bfsu.edu.cn" --build-arg pypi_mirror="https://pypi.tuna.tsinghua.edu.cn/simple"
+docker build -t mlir-he ./docker --build-arg apt_mirror="mirrors.bfsu.edu.cn" --build-arg pypi_mirror="https://pypi.tuna.tsinghua.edu.cn/simple" --build-arg python_mirror="https://registry.npmmirror.com/-/binary/python"
 ```
 
 ## Usage
