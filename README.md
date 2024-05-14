@@ -1,5 +1,8 @@
 # MLIR-He
 
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/zincnode/mlir-he/build.yml?style=flat-square&logo=githubactions)
+](https://github.com/zincnode/mlir-he/actions)[![Docker Image Version](https://img.shields.io/docker/v/zincnode/mlir-he?style=flat-square&logo=docker)](https://hub.docker.com/r/zincnode/mlir-he)
+
 ![logo](images/icon-helium.png)
 
 This project aims to provide a naive template for out-of-tree MLIR projects. 
