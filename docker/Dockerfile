@@ -24,9 +24,20 @@ RUN sed -i "s/archive.ubuntu.com/${apt_mirror}/g" /etc/apt/sources.list.d/ubuntu
 RUN yes | unminimize && \
     apt-get update && apt-get upgrade -y && \
     apt-get install -y \
-    git wget curl bash-completion apt-utils vim \
-    zlib1g-dev libssl-dev libreadline-dev libbz2-dev libsqlite3-dev liblzma-dev \
-    build-essential cmake ninja-build clang clangd lld ccache gdb
+    git wget curl bash-completion apt-utils vim unzip pigz \
+    zlib1g-dev libssl-dev libreadline-dev libbz2-dev libsqlite3-dev liblzma-dev libffi-dev \
+    build-essential ccache gdb
+
+# Get the latest version of cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.3/cmake-3.29.3-linux-x86_64.sh  && \
+    chmod +x cmake-3.29.3-linux-x86_64.sh && \
+    ./cmake-3.29.3-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.29.3-linux-x86_64.sh
+
+# Get the latest version of ninja
+RUN wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip && \
+    unzip ninja-linux.zip -d /usr/local/bin && \
+    rm ninja-linux.zip
 
 ENV PYTHON_BUILD_MIRROR_URL=${python_mirror} \
     PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1 \
@@ -46,13 +57,36 @@ RUN eval "$(pyenv init -)" && \
     pip config set global.index-url ${pypi_mirror} && \
     pip install numpy pybind11
 
-# Build LLVM
-RUN git clone https://github.com/llvm/llvm-project.git
+ARG LLVM_PROJECT_DIR=${WORKDIR}/llvm-project
+
+ENV LLVM_BUILD_DIR=${LLVM_PROJECT_DIR}/build \
+    LLVM_INSTALL_DIR=${LLVM_PROJECT_DIR}/install \
+    PATH=${LLVM_PROJECT_DIR}/build/bin:${PATH}
+
+# Get llvm-project
+RUN git clone https://github.com/llvm/llvm-project.git ${LLVM_PROJECT_DIR} && \
+    cd ${LLVM_PROJECT_DIR} && \
+    git checkout release/18.x
+
+# Build clang, clang-tools-extra and lld
 RUN eval "$(pyenv init -)" && \
-    mkdir llvm-project/build llvm-project/install && \
-    cd llvm-project/build && \
+    mkdir ${LLVM_BUILD_DIR} && \
+    cd ${LLVM_BUILD_DIR} && \
     cmake -G Ninja ../llvm \
-        -DLLVM_ENABLE_PROJECTS=mlir \
+        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld" \
+        -DLLVM_CCACHE_BUILD=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_C_COMPILER=gcc \
+        -DCMAKE_CXX_COMPILER=g++ && \
+    ninja install && \
+    rm -rf ${LLVM_BUILD_DIR}
+
+# Build MLIR
+RUN eval "$(pyenv init -)" && \
+    mkdir ${LLVM_BUILD_DIR} ${LLVM_INSTALL_DIR} && \
+    cd ${LLVM_BUILD_DIR} && \
+    cmake -G Ninja ../llvm \
+        -DLLVM_ENABLE_PROJECTS="mlir" \
         -DLLVM_TARGETS_TO_BUILD="host" \
         -DCMAKE_BUILD_TYPE=Release \
         -DLLVM_ENABLE_ASSERTIONS=ON \
@@ -64,10 +98,6 @@ RUN eval "$(pyenv init -)" && \
         -DLLVM_ENABLE_BINDINGS=OFF \
         -DCMAKE_INSTALL_PREFIX=../install && \
     ninja install
-
-ENV LLVM_BUILD_DIR=${WORKDIR}/llvm-project/build \
-    LLVM_INSTALL_DIR=${WORKDIR}/llvm-project/install \
-    PATH=${WORKDIR}/llvm-project/build/bin:${PATH}
 
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

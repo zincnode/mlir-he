@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: zincnode/mlir-he:v0.1
+    container: zincnode/mlir-he:v0.2
     defaults:
       run:
         shell: bash
