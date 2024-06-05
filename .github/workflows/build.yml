@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: zincnode/mlir-he:v0.2
+    container: zincnode/mlir-he
     defaults:
       run:
         shell: bash
@@ -13,10 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build MLIR-He
+    - name: Build mlir-he
       run: |
         ./scripts/build.sh
 
-    - name: Check MLIR-He
+    - name: Check mlir-he
       run: |
         ./scripts/build.sh -t
