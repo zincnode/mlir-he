@@ -29,10 +29,10 @@ RUN yes | unminimize && \
     build-essential ccache gdb
 
 # Get the latest version of cmake
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.3/cmake-3.29.3-linux-x86_64.sh  && \
-    chmod +x cmake-3.29.3-linux-x86_64.sh && \
-    ./cmake-3.29.3-linux-x86_64.sh --skip-license --prefix=/usr/local && \
-    rm cmake-3.29.3-linux-x86_64.sh
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.4/cmake-3.29.4-linux-x86_64.sh  && \
+    chmod +x cmake-3.29.4-linux-x86_64.sh && \
+    ./cmake-3.29.4-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.29.4-linux-x86_64.sh
 
 # Get the latest version of ninja
 RUN wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip && \
@@ -64,9 +64,7 @@ ENV LLVM_BUILD_DIR=${LLVM_PROJECT_DIR}/build \
     PATH=${LLVM_PROJECT_DIR}/build/bin:${PATH}
 
 # Get llvm-project
-RUN git clone https://github.com/llvm/llvm-project.git ${LLVM_PROJECT_DIR} && \
-    cd ${LLVM_PROJECT_DIR} && \
-    git checkout release/18.x
+RUN git clone https://github.com/llvm/llvm-project.git ${LLVM_PROJECT_DIR}
 
 # Build clang, clang-tools-extra and lld
 RUN eval "$(pyenv init -)" && \
