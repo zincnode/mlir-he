@@ -18,15 +18,17 @@ fi
 useage() {
     echo "Usage: $0 [options]"
     echo "Options:"
-    echo "  -c, --clean         Clean the project. Default: false"
-    echo "  -cb, --clean-build  Clean and build the project."
-    echo "  -d, --debug         Build the project in debug mode. Default: Release"
-    echo "  -jN                 Build the project with N threads. Default: $(nproc)"
-    echo "  -t, --test          Run the tests."
+    echo "  -c, --clean             Clean the project. Default: false"
+    echo "  -cb, --clean-build      Clean and build the project."
+    echo "  -pb, --python-bindings  Enables MLIR-He Python bindings."
+    echo "  -d, --debug             Build the project in debug mode. Default: Release"
+    echo "  -jN                     Build the project with N threads. Default: $(nproc)"
+    echo "  -t, --test              Run the tests."
 }
 
 clean_flag=0
 build_flag=1
+python_bindings="OFF"
 build_type="Release"
 build_threads=$(nproc)
 test_flag=0
@@ -47,7 +49,8 @@ build_project() {
         -DLLVM_EXTERNAL_LIT=$LLVM_BUILD_DIR/bin/llvm-lit \
         -DCMAKE_C_COMPILER=clang \
         -DCMAKE_CXX_COMPILER=clang++ \
-        -DCMAKE_BUILD_TYPE=$build_type
+        -DCMAKE_BUILD_TYPE=$build_type \
+        -DMLIR_HE_ENABLE_BINDINGS_PYTHON=$python_bindings
     ninja -j $build_threads
     if [[ $test_flag -eq 1 ]]; then
         ninja check-mlir-he -j $build_threads
@@ -62,6 +65,9 @@ for arg in "$@"; do
             ;;
         -cb|--clean-build)
             clean_flag=1
+            ;;
+        -pb|--python-bindings)
+            python_bindings="ON"
             ;;
         -d|--debug)
             build_type="Debug"

@@ -24,6 +24,7 @@ config.test_format = lit.formats.ShTest(not llvm_config.use_lit_shell)
 config.suffixes = [
     ".mlir",
     ".test",
+    ".py",
 ]
 
 # test_source_root: The root path where tests are located.
@@ -60,5 +61,21 @@ llvm_config.with_environment("PATH", config.llvm_tools_dir, append_path=True)
 
 tool_dirs = [config.mlir_he_tools_dir, config.llvm_tools_dir]
 tools = ["he-opt", "he-lsp-server"]
+
+if config.enable_bindings_python in ["ON", "1"]:
+    config.environment["PYTHONPATH"] = os.getenv("MLIR_LIT_PYTHONPATH", "")
+    llvm_config.with_environment(
+        "PYTHONPATH",
+        [
+            os.path.join(config.mlir_he_obj_root, "python_packages", "mlir_he_core"),
+        ],
+        append_path=True,
+    )
+
+tools.extend(
+    [
+        ToolSubst("%PYTHON", config.python_executable, unresolved="ignore"),
+    ]
+)
 
 llvm_config.add_tool_substitutions(tools, tool_dirs)
