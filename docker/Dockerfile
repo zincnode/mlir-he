@@ -13,6 +13,7 @@ ARG pypi_mirror=https://pypi.org/simple
 ARG python_mirror=https://www.python.org/ftp/python
 ARG python_version=3.12.3
 ARG PYENV_ROOT=/root/.pyenv
+ARG llvm_version=release/18.x
 
 # For Ubuntu 24.04, the sources.list is located at /etc/apt/sources.list.d/ubuntu.sources
 RUN sed -i "s/archive.ubuntu.com/${apt_mirror}/g" /etc/apt/sources.list.d/ubuntu.sources
@@ -41,7 +42,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-li
 
 ENV PYTHON_BUILD_MIRROR_URL=${python_mirror} \
     PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1 \
-    PATH=${PYENV_ROOT}/bin:$PATH
+    PATH=${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:${PYENV_ROOT}/plugins/pyenv-virtualenv/shims:$PATH
 
 # Install pyenv and pyenv-virtualenv
 RUN git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
@@ -64,18 +65,18 @@ ENV LLVM_BUILD_DIR=${LLVM_PROJECT_DIR}/build \
     PATH=${LLVM_PROJECT_DIR}/build/bin:${PATH}
 
 # Get llvm-project
-RUN git clone https://github.com/llvm/llvm-project.git ${LLVM_PROJECT_DIR}
+RUN git clone -b ${llvm_version} --single-branch https://github.com/llvm/llvm-project.git
 
 # Build clang, clang-tools-extra and lld
 RUN eval "$(pyenv init -)" && \
     mkdir ${LLVM_BUILD_DIR} && \
     cd ${LLVM_BUILD_DIR} && \
     cmake -G Ninja ../llvm \
-        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld" \
-        -DLLVM_CCACHE_BUILD=ON \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_C_COMPILER=gcc \
-        -DCMAKE_CXX_COMPILER=g++ && \
+    -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld" \
+    -DLLVM_CCACHE_BUILD=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=gcc \
+    -DCMAKE_CXX_COMPILER=g++ && \
     ninja install && \
     rm -rf ${LLVM_BUILD_DIR}
 
@@ -84,17 +85,17 @@ RUN eval "$(pyenv init -)" && \
     mkdir ${LLVM_BUILD_DIR} ${LLVM_INSTALL_DIR} && \
     cd ${LLVM_BUILD_DIR} && \
     cmake -G Ninja ../llvm \
-        -DLLVM_ENABLE_PROJECTS="mlir" \
-        -DLLVM_TARGETS_TO_BUILD="host" \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_ENABLE_ASSERTIONS=ON \
-        -DCMAKE_C_COMPILER=clang \
-        -DCMAKE_CXX_COMPILER=clang++ \
-        -DLLVM_ENABLE_LLD=ON \
-        -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
-        -DLLVM_INSTALL_UTILS=ON \
-        -DLLVM_ENABLE_BINDINGS=OFF \
-        -DCMAKE_INSTALL_PREFIX=../install && \
+    -DLLVM_ENABLE_PROJECTS="mlir" \
+    -DLLVM_TARGETS_TO_BUILD="host" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DLLVM_ENABLE_ASSERTIONS=ON \
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++ \
+    -DLLVM_ENABLE_LLD=ON \
+    -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+    -DLLVM_INSTALL_UTILS=ON \
+    -DLLVM_ENABLE_BINDINGS=OFF \
+    -DCMAKE_INSTALL_PREFIX=../install && \
     ninja install
 
 # Clean up
