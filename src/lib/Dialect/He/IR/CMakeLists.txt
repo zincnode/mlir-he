@@ -1,9 +1,9 @@
 add_mlir_dialect_library(HeDialect
-  He.cpp
+  HeDialect.cpp
   HeOps.cpp
 
   DEPENDS
-  MLIRHeIncGen
+  MLIRHeOpsIncGen
 
   LINK_LIBS PUBLIC
   MLIRIR

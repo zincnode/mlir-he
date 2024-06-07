@@ -6,7 +6,7 @@
 namespace mlir_he {
 
 #define GEN_PASS_DECL_CONVERTARITHTOHE
-#include "Conversion/Passes.h.inc"
+#include "mlir-he/Conversion/Passes.h.inc"
 
 std::unique_ptr<mlir::Pass> createConvertArithToHePass();
 

@@ -15,7 +15,7 @@ def ConvertArithToHe: Pass<"convert-arith-to-he"> {
   let constructor = "mlir_he::createConvertArithToHePass()";
   let dependentDialects = [
     "mlir::arith::ArithDialect",
-    "mlir_he::HeDialect"
+    "mlir_he::he::HeDialect"
   ];
 }
 

@@ -1,4 +1,4 @@
-add_mlir_conversion_library(HeArithToHe
+add_mlir_conversion_library(MLIRHeArithToHe
   ArithToHe.cpp
 
   DEPENDS

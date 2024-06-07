@@ -8,7 +8,7 @@
 #include "mlir/Interfaces/SideEffectInterfaces.h"
 
 
-#include "Dialect/He/IR/HeDialect.h.inc"
+#include "mlir-he/Dialect/He/IR/HeOpsDialect.h.inc"
 
 #define GET_OP_CLASSES
-#include "Dialect/He/IR/He.h.inc"
+#include "mlir-he/Dialect/He/IR/HeOps.h.inc"

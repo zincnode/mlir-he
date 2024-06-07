@@ -67,9 +67,20 @@ git clone https://github.com/zincnode/mlir-he.git
 ./scripts/build.sh
 ```
 
+- Build with Python bindings
+```sh
+./scripts/build.sh -pb
+```
+> 📝: The compiled Python package is named `mlir_he` and the path is `<build_dir>/python_packages/mlir_he_core/`.
+
+- Build in debug mode
+```sh
+./scripts/build.sh -d
+```
+
 - Run tests
 ```sh
-./scripts/build.sh -t
+./scripts/build.sh -t # or ./scripts/build.sh -pb -t
 ```
 
 or
@@ -77,13 +88,19 @@ or
 - Build
 ```sh
 mkdir mlir-he/build && cd mlir-he/build
+```
 
+```sh
 cmake -G Ninja .. \
    -DMLIR_DIR=$LLVM_INSTALL_DIR/lib/cmake/mlir \
    -DLLVM_EXTERNAL_LIT=$LLVM_BUILD_DIR/bin/llvm-lit \
    -DCMAKE_C_COMPILER=clang \
-   -DCMAKE_CXX_COMPILER=clang++
+   -DCMAKE_CXX_COMPILER=clang++ \
+   -DCMAKE_BUILD_TYPE="Release" \ # or "Debug"
+   -DMLIR_HE_ENABLE_BINDINGS_PYTHON=OFF # or ON
+```
 
+```sh
 ninja
 ```
 

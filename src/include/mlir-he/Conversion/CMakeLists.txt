@@ -1,0 +1,5 @@
+set(LLVM_TARGET_DEFINITIONS Passes.td)
+mlir_tablegen(Passes.h.inc -gen-pass-decls -name MLIRHeConversion)
+mlir_tablegen(Conversion.capi.h.inc -gen-pass-capi-header --prefix MLIRHeConversion)
+mlir_tablegen(Conversion.capi.cpp.inc -gen-pass-capi-impl --prefix MLIRHeConversion)
+add_public_tablegen_target(MLIRHeConversionPassIncGen)
