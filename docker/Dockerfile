@@ -14,6 +14,8 @@ ARG python_mirror=https://www.python.org/ftp/python
 ARG python_version=3.12.3
 ARG PYENV_ROOT=/root/.pyenv
 ARG llvm_version=release/18.x
+ARG cmake_version=3.29.5
+ARG ninja_version=1.12.1
 
 # For Ubuntu 24.04, the sources.list is located at /etc/apt/sources.list.d/ubuntu.sources
 RUN sed -i "s/archive.ubuntu.com/${apt_mirror}/g" /etc/apt/sources.list.d/ubuntu.sources
@@ -30,13 +32,13 @@ RUN yes | unminimize && \
     build-essential ccache gdb
 
 # Get the latest version of cmake
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.29.4/cmake-3.29.4-linux-x86_64.sh  && \
-    chmod +x cmake-3.29.4-linux-x86_64.sh && \
-    ./cmake-3.29.4-linux-x86_64.sh --skip-license --prefix=/usr/local && \
-    rm cmake-3.29.4-linux-x86_64.sh
+RUN wget https://github.com/Kitware/CMake/releases/download/v${cmake_version}/cmake-${cmake_version}-linux-x86_64.sh  && \
+    chmod +x cmake-${cmake_version}-linux-x86_64.sh && \
+    ./cmake-${cmake_version}-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-${cmake_version}-linux-x86_64.sh
 
 # Get the latest version of ninja
-RUN wget https://github.com/ninja-build/ninja/releases/download/v1.12.1/ninja-linux.zip && \
+RUN wget https://github.com/ninja-build/ninja/releases/download/v${ninja_version}/ninja-linux.zip && \
     unzip ninja-linux.zip -d /usr/local/bin && \
     rm ninja-linux.zip
 
