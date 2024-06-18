@@ -1,0 +1,30 @@
+name: new-prs
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    container: zincnode/mlir-he
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout mlir-he
+        uses: actions/checkout@v4
+
+      - name: Build & test mlir-he w/o Python bindings
+        run: |
+          ./scripts/build.sh -t
+
+      - name: Build & test mlir-he w/ Python bindings
+        run: |
+          ./scripts/build.sh -pb -t
+
+      - name: Build & test mlir-he w/ Python bindings in debug mode
+        run: |
+          ./scripts/build.sh -pb -d -t
