@@ -1,0 +1,65 @@
+name: daily-tests
+
+on:
+  schedule:
+    - cron: '0 0,12 * * *' # every day at 08:00, 20:00 (UTC+8)
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mlir-he 
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build clang lld ccache
+
+      - name: Setup Python    
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install numpy pybind11
+
+      - name: Get llvm-project
+        uses: actions/checkout@v4
+        with:
+          repository: llvm/llvm-project
+          ref: main
+          path: llvm-project
+      
+      - name: Build LLVM
+        run: |
+          mkdir llvm-project/build llvm-project/install
+          echo "LLVM_BUILD_DIR=${PWD}/llvm-project/build" >> "$GITHUB_ENV"
+          echo "LLVM_INSTALL_DIR=${PWD}/llvm-project/install" >> "$GITHUB_ENV"
+          cd llvm-project/build
+          cmake -G Ninja ../llvm \
+            -DLLVM_ENABLE_PROJECTS="mlir" \
+            -DLLVM_TARGETS_TO_BUILD="host" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_ASSERTIONS=ON \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DLLVM_ENABLE_LLD=ON \
+            -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+            -DLLVM_INSTALL_UTILS=ON \
+            -DLLVM_ENABLE_BINDINGS=OFF \
+            -DCMAKE_INSTALL_PREFIX=../install
+          ninja install
+
+      - name: Build & test mlir-he w/o Python bindings
+        run: |
+          ./scripts/build.sh -t
+
+      - name: Build & test mlir-he w/ Python bindings
+        run: |
+          ./scripts/build.sh -pb -t
+
+      - name: Build & test mlir-he w/ Python bindings in debug mode
+        run: |
+          ./scripts/build.sh -pb -d -t

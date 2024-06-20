@@ -1,6 +1,7 @@
 # mlir-he
-
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/zincnode/mlir-he/build.yml?style=flat-square&logo=githubactions)](https://github.com/zincnode/mlir-he/actions) [![Docker Image Version](https://img.shields.io/docker/v/zincnode/mlir-he?style=flat-square&logo=docker)](https://hub.docker.com/r/zincnode/mlir-he)
+[![Docker Image Version](https://img.shields.io/docker/v/zincnode/mlir-he?style=flat-square&logo=docker)](https://hub.docker.com/r/zincnode/mlir-he)
+![new-prs](https://github.com/zincnode/mlir-he/actions/workflows/new-prs.yml/badge.svg)
+![daily-tests](https://github.com/zincnode/mlir-he/actions/workflows/daily-tests.yml/badge.svg)
 
 ![logo](images/icon-helium.png)
 
