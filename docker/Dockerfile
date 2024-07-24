@@ -13,8 +13,8 @@ ARG pypi_mirror=https://pypi.org/simple
 ARG python_mirror=https://www.python.org/ftp/python
 ARG python_version=3.12.3
 ARG PYENV_ROOT=/root/.pyenv
-ARG llvm_version=release/18.x
-ARG cmake_version=3.29.5
+ARG llvm_version=release/19.x
+ARG cmake_version=3.30.1
 ARG ninja_version=1.12.1
 
 # For Ubuntu 24.04, the sources.list is located at /etc/apt/sources.list.d/ubuntu.sources
