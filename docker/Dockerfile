@@ -13,8 +13,8 @@ ARG pypi_mirror=https://pypi.org/simple
 ARG python_mirror=https://www.python.org/ftp/python
 ARG python_version=3.12.3
 ARG PYENV_ROOT=/root/.pyenv
-ARG llvm_version=release/19.x
-ARG cmake_version=3.30.1
+ARG llvm_version=main
+ARG cmake_version=3.30.3
 ARG ninja_version=1.12.1
 
 # For Ubuntu 24.04, the sources.list is located at /etc/apt/sources.list.d/ubuntu.sources
@@ -24,8 +24,7 @@ RUN sed -i "s/archive.ubuntu.com/${apt_mirror}/g" /etc/apt/sources.list.d/ubuntu
 # RUN sed -i "s/archive.ubuntu.com/${apt_mirror}/g" /etc/apt/sources.list
 
 # Install dependencies
-RUN yes | unminimize && \
-    apt-get update && apt-get upgrade -y && \
+RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y \
     git wget curl bash-completion apt-utils vim unzip pigz \
     zlib1g-dev libssl-dev libreadline-dev libbz2-dev libsqlite3-dev liblzma-dev libffi-dev \
