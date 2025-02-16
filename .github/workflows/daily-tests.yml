@@ -19,11 +19,11 @@ jobs:
       - name: Setup Python    
         uses: actions/setup-python@v5.1.0
         with:
-          python-version: '3.12'
+          python-version: '3.13'
 
       - name: Install dependencies
         run: |
-          pip install numpy pybind11
+          pip install numpy pybind11 nanobind
 
       - name: Get llvm-project
         uses: actions/checkout@v4
